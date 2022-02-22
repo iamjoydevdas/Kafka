@@ -38,4 +38,8 @@ Commit log: Database changes can be published to Kafka and applications can easi
 
 Stream processing: Kafka is extremely good for streaming and processing huge datasets.
 
+## Kafka VS Other MQs
+![image](https://user-images.githubusercontent.com/100063114/155071857-e29bbcec-8109-4c79-afbb-73ce4dd32a3b.png)
+
+
 ## How kafka works internally
