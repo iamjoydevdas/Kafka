@@ -42,7 +42,7 @@ Stream processing: Kafka is extremely good for streaming and processing huge dat
 ![image](https://user-images.githubusercontent.com/100063114/155071857-e29bbcec-8109-4c79-afbb-73ce4dd32a3b.png)
 
 
-## How kafka works internally
+## Kafka Internal Architecture
 Kafka is a message broker. A broker is an intermediary that brings together two parties that don't necessarily know each other for a mutually beneficicial exchange or deal.
 
 **Log**
@@ -52,5 +52,56 @@ Is a file that Kafka appends incoming records to. A log is an append-only, total
 
 Configuration setting log.dir, specifies where Kafka stores log data on disk.
 ![image](https://user-images.githubusercontent.com/100063114/155072218-89bb072a-02f6-41c1-a82d-65a07f49c8f0.png)
+
+
+## Topics
+Topics are logs that are seperated by topic name. Thinks topics as labeled logs. The closest analogies for a topic are a database table or a folder in a filesystem.
+ALso, it can be treated as RDBMS table without any constrains.
+
+Topic name examples:
+
+orders
+customers
+paymments
+To help manage the load of messages coming into a topic. Kafka use partitions
+
+Topics are broken down into a number of **partitions.**
+
+**Partitions are the way that Kafka provides redundancy and scalability.** Each partition can be hosted on a different server, which means that **a single topic can be scaled horizontally across multiple servers.**
+![image](https://user-images.githubusercontent.com/100063114/155073260-740260cd-6363-4fa3-94f0-4e76ec0c7c08.png)
+
+## Partitions
+- Help increasing throughput
+- Allows topic messages to be spread across several machines so that the capacity of a given topic isn't limited to the availble disk space one one server
+![image](https://user-images.githubusercontent.com/100063114/155073310-aa0b03e5-02b0-4667-b866-4f0fcec280fc.png)
+
+### Difference between Partition and Log?
+At this time, you can come up with a question. Wait a minute, Aren't Log and Partition the same thing? At first glance, they seems to look the same, but here are the difference:
+
+**Log:** physical part of a topic, where a topic is stored on the disk.
+**Partition:** logical unit used to break down a topic into splits for redundancy and scalability. You can see Log stored on disk. But with Partition, you can't. Partition is handled logically.
+
+### Important characteristics of Kafka
+- Kafka stores and retrives message from topic. Doesn't keep any state of producers or consumers
+
+- Messsages are written into Kafka in batches. A batch is just a collection of messages, all of which are being produced to the same topic and partition.
+
+ 
+## Producers and Consumers
+### Producer
+**Producers create new messages.** In other publish/subscribe systems, these may be called publishers or writers. A message will be produced to a specific topic.
+
+The producer does not care what partition a specifict message is written to and will balance messages over all partitions of a topic evenyly
+In some case, the producer will direct messages to specific partitions using message key. Messages with a specified message key will be ensured to come in the right order in a partition.
+
+![image](https://user-images.githubusercontent.com/100063114/155073725-3f5c4800-74a9-41b1-ab5a-fdf493eecdc6.png)
+
+### Consumer
+**Consumers read messages.** In other publish/subscribe systems, these may be called subscribers or readers.
+
+The consumer subscribes to one or more topics and reads the messages in the order in which they were produced.
+The consumer keeps track of which message it has already consumed by keeping track of the offset of messages.
+The offset is a simple integer number that is used by Kafka to maintain the current position of a consumer.
+![image](https://user-images.githubusercontent.com/100063114/155073838-c88b84f4-e452-4015-920d-0d3ac6f77dfa.png)
 
 
