@@ -127,6 +127,99 @@ Consumers groups used to read and process data in parallel.
   - If the messages were successfully writtent to Kafka, return a RecordMetatData object contains <topic, partition, offset>
   - If failed, the broker will return an error. The producer may retry sending the message a few more times before giving up and returning an error.
 
+![image](https://user-images.githubusercontent.com/100063114/155076057-3e53de3c-5ff7-4164-9457-d16f84e54be0.png)
 
+## Broker and Clusters
+### Broker
+**A single Kafka server is called a broker.** The broker receives messages from producers, assigns offsets to them and commits the messages to storage on disk.
 
+Brokers are desigined to operate as part of a **cluster.**
+
+### Cluster membership management with **Zookeeper**
+Kafka uses Apache Zookeeper to maintain the list of brokers that are currently members of a cluster. ZooKeeper is a consistent file system for configuration information.
+
+It acts as a centralized service and helps to keep track of the Kafka cluster nodes status, Kafka topics, and partitions.
+
+### Cluster controller
+In a cluster, one broker will also function as the cluster controller
+
+A cluster controller is one of the kafka brokers that in addition to the usual broker functionality:
+
+- administrative operations: assigning partitions to brokers and monitoring for broker failures
+electing partition leaders(explained in the next section)
+- Cluster only have one controller at a time
+- The first broker that starts in the cluster becomes the controller.
+
+### Replica
+Replication is at the heart of Kafka's architecture. It guarantees availability and durability when individual nodes inevitably fail.
+
+Each broker holds a number of partitions and each of these partitions can be either a leader or a replica for a topic
+
+There are two types of replica:
+
+### Leader replica
+- Each partition has a single replica designated as the leader.
+- All produce and consume requests go through the leader, in order to guarantee consistency.
+- Each partition also have a prefered leader, the replica that was the leader when the topic is originally created.
+### Follower replica
+- All replicas for a partition that are not leaders are called followers
+- Followers don't serve client requests
+- Only replicate messages from the leader and stay up-to-date with the most recent message the leader has
+- When a leader crashes, one of follower replica will be promoted to become the leader
+- A Follower replica that catch up with the most recent messages of the leader are callled In-Sync replica
+- Only in-sync replicas are eligible to be elected as partition leader in case the existing leader fail
+
+### Partitions count, replication factor
+The two most important parameters when creating a topic: Patition and replication factor They impact performance and durability of the system overall
+
+## Patitions
+- Each partition can handle a throughput of a few MB/s
+- More patitions implies:
+  - Better parallelism, better throughput
+  - Ability to run more consumers in a group to scale
+  - Ability to leverage more brokers if you have a large cluster
+  - BUT more elections to perform for Zookeeper
+  - BUT more files opened on Kafka
+## Guidelines:
+
+### Patitions per topic = MILLION DOLAR QUESTION
+- Small cluster(<6 brokers>): #partitions per topic = 2 x number of brokers
+- Big cluster(>12 brokers): 1 x # of brokers
+
+### Replication: should be at least 2, usually 3, maximum 4
+The higher the replication factor(N):
+
+ - Better resilience of your system(N-1 brokers can fail)
+ - But more replication (higher latency if acks=all)
+
+### Paritions and Segments
+- Partitions are made of ...segments(files) 
+- Active segment means the segment are still being written to
+- log.segment.bytes: the max side of a single segment in bytes
+- log.segment.ms: the time Kafka will wait before comming the segment if not full
+![image](https://user-images.githubusercontent.com/100063114/155077474-53272bc2-3659-462f-b5f6-bb11e78dadef.png)
+
+### Kafka broker discovery
+- Every Kafka broker is also called a "boostrap server"
+- You only need to connect to one broker and you will be connected to the entire cluster
+- Each broker knows about all brokers, topics and patitions
+
+## Configure consumer
+### How kafka handle consumers exit/enter groups?
+![image](https://user-images.githubusercontent.com/100063114/155077880-593bb845-0af0-4252-bf72-c55851c253cc.png)
+![image](https://user-images.githubusercontent.com/100063114/155077909-7843b902-e267-43ba-8fa0-2f2f1179f35f.png)
+
+That's the job of a **group coordinator**
+One of the kafka brokers get elected as a group coordinator. When a consumer want to join a group, it send a request to the group coordinator
+
+The first consumer participating in a group is called a group leader.
+
+During the rebalance activity, none of the consumers are allowed to read any messages.
+
+rebalance: When a new consumer joins a consumer group the set of consumers attempt to "rebalance" the load to assign partitions to each consumer.
+
+## Consumer offset
+Kafka stores the offset at which a consumer group has been reading
+The offsets are commited in a Kafka topic named __consumer__offsets
+If a consumer dies, it will be able to read back from where it left off thanks to the commited consumer offset
 
