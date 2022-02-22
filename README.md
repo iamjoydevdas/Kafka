@@ -60,9 +60,9 @@ ALso, it can be treated as RDBMS table without any constrains.
 
 Topic name examples:
 
-orders
-customers
-paymments
+- orders
+- customers
+- paymments
 To help manage the load of messages coming into a topic. Kafka use partitions
 
 Topics are broken down into a number of **partitions.**
