@@ -104,4 +104,29 @@ The consumer keeps track of which message it has already consumed by keeping tra
 The offset is a simple integer number that is used by Kafka to maintain the current position of a consumer.
 ![image](https://user-images.githubusercontent.com/100063114/155073838-c88b84f4-e452-4015-920d-0d3ac6f77dfa.png)
 
+**Consumers work as part of a consumer group, which is one or more consumers that work together to consume a topic.** Group assures that each each partition is only consumed by one member. If a single consumer fails, the remaning members of group will rebalance the partitions being consumed to take over the missing member.
+
+### Consumer group
+Consumers groups used to read and process data in parallel.
+
+### How consumers can read data in parallel without duplicate reads? Kafka provide a simple solution for this problem.
+
+- A partition can only be consumed by one consumer at a time.
+- But a consumer can consumer multiple partitions parallelly.
+![image](https://user-images.githubusercontent.com/100063114/155074195-a59f7346-d061-4265-a678-2e4d3dc82ca5.png)
+![image](https://user-images.githubusercontent.com/100063114/155074216-f6e09b7f-607d-4254-b6b5-578befe0d346.png)
+![image](https://user-images.githubusercontent.com/100063114/155074229-0573d8ea-66a0-4be3-b56e-4a8aecbc7cf4.png)
+![image](https://user-images.githubusercontent.com/100063114/155074244-5c876122-ae5b-43c9-af02-79dd3f0955c1.png)
+
+### Flow of sending a message
+- Create a ProducerRecord, which must include the topic we want to send the record to and a value. Optionally, we can also specify a key and/or a partition.
+- Then Serialized the key and value objects to ByteArrays so they can be sent over the network
+- Data is sent to a partitioner. The partition check if ProducerRecord has a specifed partition option. If yes, it doesn't do anything an reply the partition we specify. If not, the partitioner will choose a partition for us.
+- Once a partition is selected, the producer then add the record to a batch of records that will also be sent to the same topic and partition.
+- When broker receives the messages, it sends back a response.
+  - If the messages were successfully writtent to Kafka, return a RecordMetatData object contains <topic, partition, offset>
+  - If failed, the broker will return an error. The producer may retry sending the message a few more times before giving up and returning an error.
+
+
+
 
