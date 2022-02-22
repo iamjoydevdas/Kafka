@@ -45,7 +45,7 @@ Stream processing: Kafka is extremely good for streaming and processing huge dat
 ## Kafka Internal Architecture
 Kafka is a message broker. A broker is an intermediary that brings together two parties that don't necessarily know each other for a mutually beneficicial exchange or deal.
 
-**Log**
+### Log
 Is a file that Kafka appends incoming records to. A log is an append-only, totally ordered sequence of records ordered by time
 
 ![image](https://user-images.githubusercontent.com/100063114/155072172-c235d623-b15e-4cf0-80ad-984399b746a1.png)
