@@ -31,6 +31,10 @@ Following is the step wise workflow of the Pub-Sub Messaging −
 - Once the messages are processed, consumer will send an acknowledgement to the Kafka broker.
 
 - Once Kafka receives an acknowledgement, it changes the offset to the new value and updates it in the Zookeeper. Since offsets are maintained in the Zookeeper, the consumer can read next message correctly even during server outrages.
+`It all depends on which consumer you're using. You should choose the right consumer based on your Kafka version.`
+```for version 0.8 brokers use the HighLevelConsumer. The offsets for your groups are stored in zookeeper.```
+```For brokers 0.9 and higher you should use the new ConsumerGroup. The offsets are stored with kafka brokers.```
+```Keep in mind that HighLevelConsumer will still work with versions past 0.8 but they have been deprecated in 0.10.1 and support will probably go away soon. The ConsumerGroup has rolling migration options to help move from HighLevelConsumer if you were committed to using it.```
 
 - This above flow will repeat until the consumer stops the request.
 
