@@ -48,3 +48,12 @@ Within the Producer, the role of a Partitioning Key is to indicate the destinati
 
 ### 13. In the Producer, when does QueueFullException occur?
 QueueFullException typically occurs when the Producer attempts to send messages at a pace that the Broker cannot handle. Since the Producer doesn’t block, users will need to add enough brokers to collaboratively handle the increased load.
+
+### 14. KAFKA VS RABBITMQ
+Three application level difference is:
+
+ - Kafka supports re-read of consumed messages while rabbitMQ not.
+
+- Kafka supports ordering of messages in partition while rabbitMQ supports it with some constraint such as one exchange routing to the queue,one queue, one consumer to queue.
+
+- Kafka is for fast in publishing data to partition than rabbitMQ.
