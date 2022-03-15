@@ -7,10 +7,14 @@ Wikipedia defines Kafka as “an open-source message broker project developed by
 ### 2. List the various components in Kafka.
 The four major components of Kafka are:
 
-Topic – a stream of messages belonging to the same type
-Producer – that can publish messages to a topic
-Brokers – a set of servers where the publishes messages are stored
-Consumer – that subscribes to various topics and pulls data from the brokers.
+**Topic** – a stream of messages belonging to the same type
+
+**Producer** – that can publish messages to a topic
+
+**Brokers** – a set of servers where the publishes messages are stored
+
+**Consumer** – that subscribes to various topics and pulls data from the brokers.
+
 ### 3. Explain the role of the offset.
 Messages contained in the partitions are assigned a unique ID number that is called the offset. The role of the offset is to uniquely identify every message within the partition.
 
